@@ -209,17 +209,23 @@ module Sortable
       def process_search(params, conditions, search_array)
         if !params[:q].blank?
           columns_to_search = ''
-          values = Array.new        
+          values = []        
           g = Generator.new(search_array)
           g.each do |col|
            columns_to_search += col + ' LIKE ? '
            columns_to_search += 'OR ' unless g.end?
            values<< "%#{params[:q]}%"
           end
-          conditions += ' and' if !conditions.blank?
-          conditions = [conditions + ' (' + columns_to_search + ')'] + values
+          #conditions = "#{conditions} and" 
+          if !conditions.blank? 
+            full_conditions = ["#{conditions[0]} AND (#{columns_to_search})"]
+            values = [conditions[1]] + values 
+          else
+            full_conditions = ["( #{columns_to_search} )"]
+          end
+          full_conditions += values
         end
-        return conditions
+        return full_conditions
       end
 
       def value_provided?(params, name)
