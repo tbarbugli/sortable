@@ -282,7 +282,7 @@ module Sortable
             direction = 'DESC'
           end
         end
-        result += column + ' ' + direction        
+        result = "#{column} #{direction}"       
       end
       
       def get_sort_key(sort)
